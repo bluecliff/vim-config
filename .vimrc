@@ -1,362 +1,499 @@
-"set t_Co=256
+"==========================================
+" Author:  wklken
+" Version: 7
+" Email: wklken@yeah.net
+" BlogPost: http://wklken.me
+" ReadMe: README.md
+" Last_modify: 2014-03-15
+" Sections:
+"       -> Initial Plugin 加载插件
+"       -> General Settings 基础设置
+"       -> Display Settings 展示/排版等界面格式设置
+"       -> FileEncode Settings 文件编码设置
+"       -> Others 其它配置
+"       -> HotKey Settings  自定义快捷键
+"       -> FileType Settings  针对文件类型的设置
+"       -> Theme Settings  主题设置
+"
+"       -> 插件配置和具体设置在vimrc.bundles中
+"==========================================
 
-" Uncomment the next line to make Vim more Vi-compatible
-" NOTE: debian.vim sets 'nocompatible'. Setting 'compatible' changes numerous
-" options, so any other options should be set AFTER setting 'compatible'.
-"set nocompatible
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the
-" following enables syntax highlighting by default.
-if has("syntax")
-  syntax on            " 语法高亮
+"==========================================
+" Initial Plugin 加载插件
+"==========================================
+
+" 修改leader键
+let mapleader = ','
+let g:mapleader = ','
+
+" 开启语法高亮
+syntax enable
+
+
+" install Vundle bundles
+if filereadable(expand("~/.vimrc.bundles"))
+  source ~/.vimrc.bundles
 endif
 
-
-"文件编码
-set enc=utf-8
-set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
-
-
-" The following are commented out as they cause vim to behave a lot
-" differently from regular Vi. They are highly recommended though.
-set ignorecase        " 搜索模式里忽略大小写
-set smartcase        " 如果搜索模式包含大写字符，不使用 'ignorecase' 选项。只有在输入搜索模式并且打开 'ignorecase' 选项时才会使用。
-set autowrite        " 自动把内容写回文件: 如果文件被修改过，在每个 :next、:rewind、:last、:first、:previous、:stop、:suspend、:tag、:!、:make、CTRL-] 和 CTRL-^命令时进行;用 :buffer、CTRL-O、CTRL-I、'{A-Z0-9} 或 `{A-Z0-9} 命令转到别的文件时亦然。
-
-"默认窗口大小
-set lines=35 columns=82
-"光标在窗口上下边界时距离边界7行即开始滚屏
-set so=7
-"显示行号
-set number
-
-"set go= "无菜单、工具栏"
-" 隐藏工具栏，可用快捷键F2切换
-set guioptions-=T
-
-
-"语法高亮
-"syntax=on
-
-"自动缩进
-set autoindent
-" C语言方式缩进
-set cindent
-" 智能缩进
-set smartindent
-
-" 统一缩进为4
-set tabstop=4        " 设置制表符(tab键)的宽度
-set softtabstop=4     " 设置软制表符的宽度
-set shiftwidth=4    " (自动) 缩进使用的4个空格
-
-set cindent            " 使用 C/C++ 语言的自动缩进方式
-set modeline
-
-" 空格代替tab
-set expandtab
-
-
-" 侦测文件类型
-filetype on
-
-" 为特定文件类型载入相关缩进格式
-filetype indent on
-
-" 为特定的文件类型载入对应的插件
-filetype plugin on
+" ensure ftdetect et al work by including this after the Vundle stuff
 filetype plugin indent on
 
-" 不与vi兼容
-set nocp
+"==========================================
+" General Settings 基础设置
+"==========================================
 
+"以下配置有详细说明，一些特性不喜欢可以直接注解掉
 
-au Filetype make set noexpandtab
+set guifont=Monaco:h20          " 字体 && 字号
 
-au FileType c,cpp,h,java,javascript,html,htmldjango setlocal cindent
+" history存储容量
+set history=2000
 
-" 使用C样式的缩进
-function! GnuIndent()
-    setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
-    setlocal shiftwidth=4
-    setlocal tabstop=4
-endfunction
+"检测文件类型
+filetype on
+"针对不同的文件类型采用不同的缩进格式
+filetype indent on
+"允许插件
+filetype plugin on
+"启动自动补全
+filetype plugin indent on
 
-"astyle as c and cpp styler
-autocmd FileType c,cpp,h set formatprg=astyle
+set autoread          " 文件修改之后自动载入。
+set shortmess=atI       " 启动的时候不显示那个援助索马里儿童的提示
 
-au FileType c,cpp,h,java,python,javascript setlocal cinoptions=:0,g0,(0,w1 shiftwidth=4 tabstop=4 softtabstop=4
-au FileType diff  setlocal shiftwidth=4 tabstop=4
-au FileType html,css,htmldjango,html,xml setlocal autoindent sw=2 ts=2 sts=2 fdm=manual expandtab
-au FileType javascript setlocal sw=4 ts=4 sts=4 expandtab
-au FileType changelog setlocal textwidth=76
+" 备份,到另一个位置. 防止误删, 目前是取消备份
+"set backup
+"set backupext=.bak
+"set backupdir=/tmp/vimbk/
 
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-
-" 自动换行
-set wrap
-
-" 整词换行
-set linebreak
-
-
-" 高亮显示匹配的括号
-set showmatch
-
-" 搜索逐字符高亮和实时搜索
-set hlsearch
-set incsearch
-
-set showmatch        " 设置匹配模式，显示匹配的括号
-set linebreak        " 整词换行
-set wrap             " 自动换行显示
-set whichwrap=b,s,<,>,[,] " 光标从行首和行末时可以跳到另一行去
-"set hidden " Hide buffers when they are abandoned
-set history=50        " set command history to 50    "历史记录50条
-"鼠标支持
-if has('mouse')
-    set mouse=a
-    "set selection=exclusive
-    set selectmode=mouse,key
-    set nomousehide
-endif
-
-"--状态行设置--
-set laststatus=2 " 总显示最后一个窗口的状态行；设为1则窗口数多于一个的时候显示最后一个窗口的状态行；0不显示最后一个窗口的状态行
-set ruler            " 标尺，用于显示光标位置的行号和列号，逗号分隔。每个窗口都有自己的标尺。如果窗口有状态行，标尺在那里显示。否则，它显示在屏幕的最后一行上。
-
-" 状态行颜色
-highlight StatusLine guifg=SlateBlue guibg=Yellow
-highlight StatusLineNC guifg=Gray guibg=White
-
-"--命令行设置--
-set showcmd            " 命令行显示输入的命令
-set showmode        " 命令行显示vim当前模式
-set cmdheight=1             " 设定命令行的行数为 1
-
-
-" 编码设置
-if has("gui_running") || has("unix")
-	set encoding=utf-8 " 设置vim内部使用的字符编码
-	lang messages zh_CN.UTF-8 " 解决consle输出乱码
-else
-	set encoding=chinese " 设置命令提示符下vim不乱码
-	set termencoding=chinese "终端下的编码，对gvim来说没有必要设置
-endif
-" 在图形界面和终端的配色方案、字体
-if has("gui_running")
-	set columns=100 lines=40    "设置gui默认界面大小
-	if has("unix")
-		colorscheme desert
-		set guifont=Bitstream\ Vera\ Sans\ Mono\ 13
-	"	set guifont=Monospace\ 13
-		set guifontwide=KaiTi\ 13
-	elseif has("win32")
-		colorscheme asu1dark
-		set guifont=Courier:h12:cANSI
-		set guifontwide=NSimSun:h12
-" guifontwide只有在encoding=utf-8时才生效
-	endif
-else
-	if has("unix")
-		colorscheme default
-	elseif
-		has("win32")
-		colorscheme ir_black
-	endif
-endif
-
-
-" Recognize standard C++ headers
-au BufEnter /usr/include/c++/*    setf cpp
-au BufEnter /usr/include/g++-3/*  setf cpp
-
-" Setting for files following the GNU coding standard
-au BufEnter /usr/*                call GnuIndent()
-
-function! RemoveTrailingSpace()
-    if $VIM_HATE_SPACE_ERRORS != '0' &&
-                \(&filetype == 'c' || &filetype == 'cpp' || &filetype == 'vim')
-        normal m`
-        silent! :%s/\s\+$//e
-        normal ``
-    endif
-endfunction
-" Remove trailing spaces for C/C++ and Vim files
-au BufWritePre *                  call RemoveTrailingSpace()
-
-
-"默认无备份
+" 取消备份。 视情况自己改
 set nobackup
-set nowritebackup
+" 关闭交换文件
+set noswapfile
 
-"在insert模式下能用删除键进行删除
-set backspace=indent,eol,start
 
-"去掉有关vi一致性模式，避免以前版本的一些bug和局限
-set nocp
+"create undo file
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+if v:version >= 730
+    set undofile                " keep a persistent backup file
+    set undodir=/tmp/vimundo/
+endif
+
+set wildignore=*.swp,*.bak,*.pyc,*.class
+" 突出显示当前行等
+set cursorcolumn
+set cursorline          " 突出显示当前行
+
+
+"设置 退出vim后，内容显示在终端屏幕, 可以用于查看和复制
+"好处：误删什么的，如果以前屏幕打开，可以找回
+set t_ti= t_te=
+
+
+"- 则点击光标不会换,用于复制
+set mouse-=a             " 鼠标暂不启用, 键盘党....
+
+" 修复ctrl+m 多光标操作选择的bug，但是改变了ctrl+v进行字符选中时将包含光标下的字符
+"set selection=exclusive
+set selection=inclusive
+set selectmode=mouse,key
+
+" No annoying sound on errors
+" 去掉输入错误的提示声音
+set title                " change the terminal's title
+set novisualbell         " don't beep
+set noerrorbells         " don't beep
+set t_vb=
+set tm=500
+
+" Remember info about open buffers on close"
+set viminfo^=%
+
+" For regular expressions turn magic on
+set magic
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+"==========================================
+" Display Settings 展示/排版等界面格式设置
+"==========================================
+"
+"显示当前的行号列号：
+set ruler
+""在状态栏显示正在输入的命令
+set showcmd
+" Show current mode
+set showmode
+
+" Set 7 lines to the cursor - when moving vertically using j/k 上下滚动,始终在中间
+set scrolloff=7
+
+" set winwidth=79
+
+" 命令行（在状态行下）的高度，默认为1，这里是2
+set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
+" Always show the status line
+set laststatus=2
+
+"显示行号：
+set number
+" 取消换行。
+set nowrap
+
+"括号配对情况
+set showmatch
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+"设置文内智能搜索提示
+" 高亮search命中的文本。
+set hlsearch
+" 搜索时忽略大小写
+set ignorecase
+" 随着键入即时搜索
+set incsearch
+" 有一个或以上大写字母时仍大小写敏感
+set smartcase     " ignore case if search pattern is all lowercase, case-sensitive otherwise
+
+" 代码折叠
+set foldenable
+" 折叠方法
+" manual    手工折叠
+" indent    使用缩进表示折叠
+" expr      使用表达式定义折叠
+" syntax    使用语法定义折叠
+" diff      对没有更改的文本进行折叠
+" marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
+set foldmethod=indent
+set foldlevel=99
+
+" 缩进配置
+
+set smartindent   " Smart indent
+set autoindent    " always set autoindenting on
+" never add copyindent, case error   " copy the previous indentation on autoindenting
+
+" tab相关变更
+set tabstop=4     " 设置Tab键的宽度        [等同的空格个数]
+set shiftwidth=4  " number of spaces to use for autoindenting
+set softtabstop=4 " 按退格键时可以一次删掉 4 个空格
+set smarttab      " insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
+set expandtab     " 将Tab自动转化成空格    [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
+set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
+
+" A buffer becomes hidden when it is abandoned
+set hidden
+set wildmode=list:longest
+set ttyfast
+
+
+" 相对行号      行号变成相对，可以用 nj  nk   进行跳转 5j   5k 上下跳5行
+set relativenumber number
+au FocusLost * :set norelativenumber number
+au FocusGained * :set relativenumber
+" 插入模式下用绝对行号, 普通模式下用相对
+autocmd InsertEnter * :set norelativenumber number
+autocmd InsertLeave * :set relativenumber
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set norelativenumber number
+  else
+    set relativenumber
+  endif
+endfunc
+nnoremap <C-n> :call NumberToggle()<cr>
+
+
+"==========================================
+" FileEncode Settings 文件编码,格式
+"==========================================
+" 设置新文件的编码为 UTF-8
+set encoding=utf-8
+" 自动判断编码时，依次尝试以下编码：
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set helplang=cn
+"set langmenu=zh_CN.UTF-8
+"set enc=2byte-gb18030
+" 下面这句只影响普通模式 (非图形界面) 下的 Vim。
+set termencoding=utf-8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+" 如遇Unicode值大于255的文本，不必等到空格再折行。
+set formatoptions+=m
+" 合并两行中文时，不在中间加空格：
+set formatoptions+=B
+
+
+"==========================================
+" others 其它设置
+"==========================================
+autocmd! bufwritepost _vimrc source % " vimrc文件修改之后自动加载。 windows。
+autocmd! bufwritepost .vimrc source % " vimrc文件修改之后自动加载。 linux。
+
+" 自动补全配置
+"让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+set completeopt=longest,menu
+
 " 增强模式中的命令行自动完成操作
 set wildmenu
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc,*.class
 
-" 使用英文菜单,工具条及消息提示
-set langmenu=none
+"离开插入模式后自动关闭预览窗口
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+"回车即选中当前项
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
 
-"自动缩排
-set ai
+"上下左右键的行为 会显示其他信息
+inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 
-" 不要闪烁
-set novisualbell
+" if this not work ,make sure .viminfo is writable for you
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
-"设置语法折叠
-set foldmethod=syntax
-set foldcolumn=0 "设置折叠区域的宽度
-set foldlevel=100
-" 用空格键来开关折叠
-set foldenable
-nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
-set foldlevel=100
+"==========================================
+" HotKey Settings  自定义快捷键设置
+"==========================================
+
+" 主要按键重定义
+
+" 关闭方向键, 强迫自己用 hjkl
+map <Left> <Nop>
+map <Right> <Nop>
+map <Up> <Nop>
+map <Down> <Nop>
+
+"Treat long lines as break lines (useful when moving around in them)
+"se swap之后，同物理行上线直接跳
+map j gj
+map k gk
+
+" F1 - F6 设置
+" F1 废弃这个键,防止调出系统帮助
+" F2 行号开关，用于鼠标复制代码用
+" F3 显示可打印字符开关
+" F4 换行开关
+" F5 粘贴模式paste_mode开关,用于有格式的代码粘贴
+" F6 语法开关，关闭语法可以加快大文件的展示
+
+" I can type :help on my own, thanks.  Protect your fat fingers from the evils of <F1>
+noremap <F1> <Esc>"
+
+""为方便复制，用<F2>开启/关闭行号显示:
+function! HideNumber()
+  if(&relativenumber == &number)
+    set relativenumber! number!
+  elseif(&number)
+    set number!
+  else
+    set relativenumber!
+  endif
+  set number?
+endfunc
+nnoremap <F2> :call HideNumber()<CR>
+nnoremap <F3> :set list! list?<CR>
+nnoremap <F4> :set wrap! wrap?<CR>
+              "set paste
+set pastetoggle=<F5>            "    when in insert mode, press <F5> to go to
+                                "    paste mode, where you can paste mass data
+                                "    that won't be autoindented
+
+" disbale paste mode when leaving insert mode
+au InsertLeave * set nopaste
+
+nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
 
-"添加python，shell文件头
-au BufNewFile *.py call ScriptHeader()
-au BufNewFile *.sh call ScriptHeader()
+"Smart way to move between windows 分屏窗口移动
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
 
-function ScriptHeader()
+" Go to home and end using capitalized directions
+noremap H ^
+noremap L $
+
+
+"Map ; to : and save a million keystrokes
+" ex mode commands made easy 用于快速进入命令行
+nnoremap ; :
+
+
+" 命令行模式增强，ctrl - a到行首， -e 到行尾
+cnoremap <C-j> <t_kd>
+cnoremap <C-k> <t_ku>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+
+" 搜索相关
+
+" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+map <space> /
+" 进入搜索Use sane regexes"
+nnoremap / /\v
+vnoremap / /\v
+
+"Keep search pattern at the center of the screen."
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+
+" 去掉搜索高亮
+noremap <silent><leader>/ :nohls<CR>
+
+" --------tab/buffer相关
+
+"Use arrow key to change buffer"
+noremap <left> :bp<CR>
+noremap <right> :bn<CR>
+
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" ------- 选中及操作改键
+
+"Reselect visual block after indent/outdent.调整缩进后自动选中，方便再次操作
+vnoremap < <gv
+vnoremap > >gv
+
+" y$ -> Y Make Y behave like other capitals
+map Y y$
+
+" select all
+map <Leader>sa ggVG"
+
+" select block
+nnoremap <leader>v V`}
+
+" w!! to sudo & write a file
+cmap w!! w !sudo tee >/dev/null %
+
+" kj 替换 Esc
+inoremap kj <Esc>
+
+" 滚动Speed up scrolling of the viewport slightly
+nnoremap <C-e> 2<C-e>
+nnoremap <C-y> 2<C-y>
+
+
+"Jump to start and end of line using the home row keys
+nmap t o<ESC>k
+nmap T O<ESC>j
+
+" Quickly close the current window
+nnoremap <leader>q :q<CR>
+
+" Swap implementations of ` and ' jump to markers
+" By default, ' jumps to the marked line, ` jumps to the marked line and
+" column, so swap them
+nnoremap ' `
+nnoremap ` '
+
+" remap U to <C-r> for easier redo
+nnoremap U <C-r>
+
+" Quickly edit/reload the vimrc file
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+
+"==========================================
+" FileType Settings  文件类型设置
+"==========================================
+
+" Python 文件的一般设置，比如不要 tab 等
+autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
+
+" 保存python文件时删除多余空格
+" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite *.py :call DeleteTrailingWS()
+
+" 定义函数AutoSetFileHead，自动插入文件头
+autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
+function! AutoSetFileHead()
+    "如果文件类型为.sh文件
+    if &filetype == 'sh'
+        call setline(1, "\#!/bin/bash")
+    endif
+
+    "如果文件类型为python
     if &filetype == 'python'
-        let header = "#!/usr/bin/env python2"
-        let coding = "# -*- coding:utf-8 -*-"
-        let cfg = "# vim: ts=4 sw=4 sts=4 expandtab"
-    elseif &filetype == 'sh'
-        let header = "#!/bin/bash"
+        call setline(1, "\#!/usr/bin/env python")
+        call append(1, "\# encoding: utf-8")
     endif
-    let line = getline(1)
-    if line == header
-        return
-    endif
-    normal m'
-    call append(0,header)
-    if &filetype == 'python'
-        call append(1,coding)
-        call append(3, cfg)
-    endif
-    normal ''
-endfunction
 
-"插件管理vundlel
-set nocompatible " be iMproved
-filetype off " required!
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+    normal G
+    normal o
+    normal o
+endfunc
 
-Bundle 'Tagbar'
-"Bundle 'cscope'
-Bundle 'OmniCppComplete'
-Bundle 'scrooloose/nerdtree'
-Bundle 'snipMate'
-Bundle 'DoxygenToolkit.vim'
+" F10 to run python script
+nnoremap <buffer> <F10> :exec '!python' shellescape(@%, 1)<cr>
 
-filetype plugin indent on
+"==========================================
+" Theme Settings  主题设置
+"==========================================
 
-"tagbar配置
-nmap <silent> <F4> :TagbarToggle<CR>
-    let g:tagbar_ctags_bin = 'ctags'
-    let g:tagbar_width = 25
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guifont=Monaco:h14
+    set guioptions-=T
+    set guioptions+=e
+    set guioptions-=r
+    set guioptions-=L
+    set guitablabel=%M\ %t
+    set showtabline=1
+    set linespace=2
+    set noimd
+    set t_Co=256
+    set guifont=DejaVu\ Sans\ Mono\ 14
+    set guifontwide=\msyh\ WenQuanYi\ Zen\ Hei\ 15
+   "" set linespace=-1
+endif
 
-"nerdtree配置,详细配置可参考github上的代码仓库
-map <F3> :NERDTreeToggle<CR>
+" theme主题
+set background=dark
+"colorscheme solarized
+set t_Co=256
 
-"omniCpp配置
-let OmniCpp_GlobalScopeSearch = 1 "0 or 1
-let OmniCpp_NamespaceSearch = 1
-let OmniCpp_DisplayMode = 1
-let OmniCpp_ShowScopeInAbbr = 0
-let OmniCpp_ShowPrototypeInAbbr = 1
-let OmniCpp_ShowAccess = 1
-let OmniCpp_MayCompleteDot = 1
-let OmniCpp_MayCompleteArrow = 1
-let OmniCpp_MayCompleteScope = 1
-imap <TAB> <C-X><C-N>
+colorscheme molokai
+"colorscheme desert
 
+"设置标记一列的背景颜色和数字一行颜色一致
+hi! link SignColumn   LineNr
+hi! link ShowMarksHLl DiffAdd
+hi! link ShowMarksHLu DiffChange
 
+"" for error highlight，防止错误整行标红导致看不清
+highlight clear SpellBad
+highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
+highlight clear SpellCap
+highlight SpellCap term=underline cterm=underline
+highlight clear SpellRare
+highlight SpellRare term=underline cterm=underline
+highlight clear SpellLocal
+highlight SpellLocal term=underline cterm=underline
 
-
-
-
-"tag,cscope配置
-let g:vimrc_iswindows=0
-let g:iswindows=0
-map <F12> :call Do_CsTag()<CR>
-nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>
-nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>
-nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-function Do_CsTag()
-    let dir = getcwd()
-    if filereadable("tags")
-        if(g:iswindows==1)
-            let tagsdeleted=delete(dir."\\"."tags")
-        else
-            let tagsdeleted=delete("./"."tags")
-        endif
-        if(tagsdeleted!=0)
-            echohl WarningMsg | echo "Fail to do tags! I cannot delete the tags" | echohl None
-            return
-        endif
-    endif
-    if has("cscope")
-        silent! execute "cs kill -1"
-    endif
-    if filereadable("cscope.files")
-        if(g:iswindows==1)
-            let csfilesdeleted=delete(dir."\\"."cscope.files")
-        else
-            let csfilesdeleted=delete("./"."cscope.files")
-        endif
-        if(csfilesdeleted!=0)
-            echohl WarningMsg | echo "Fail to do cscope! I cannot delete the cscope.files" | echohl None
-            return
-        endif
-    endif
-    if filereadable("cscope.out")
-        if(g:iswindows==1)
-            let csoutdeleted=delete(dir."\\"."cscope.out")
-        else
-            let csoutdeleted=delete("./"."cscope.out")
-        endif
-        if(csoutdeleted!=0)
-            echohl WarningMsg | echo "Fail to do cscope! I cannot delete the cscope.out" | echohl None
-            return
-        endif
-    endif
-    if(executable('ctags'))
-        "silent! execute "!ctags -R --c-types=+p --fields=+S *"
-        silent! execute "!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q ."
-    endif
-    if(executable('cscope') && has("cscope") )
-        if(g:iswindows!=1)
-            silent! execute "!find . -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.java' -o -name '*.cs' > cscope.files"
-        else
-            silent! execute "!dir /s/b *.c,*.cpp,*.h,*.java,*.cs >> cscope.files"
-        endif
-        silent! execute "!cscope -b"
-        execute "normal :"
-        if filereadable("cscope.out")
-            execute "cs add cscope.out"
-        endif
-    endif
-endfunction
-
-"doxygen tool kit
-let g:DoxygenToolkit_briefTag_pre="@bref  "
-let g:DoxygenToolkit_paramTag_pre="@param "
-let g:DoxygenToolkit_returnTag="@returns   "
-"let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
-"let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
-let g:DoxygenToolkit_authorName="li shuangjiang"
-"let g:DoxygenToolkit_licenseTag="Copyright 2010, Kunihiko Sadakane, all rights reserved.\n  This software may be used freely for any purpose. \nNo warranty is given regarding the quality of this software."
